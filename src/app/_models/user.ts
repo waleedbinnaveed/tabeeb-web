@@ -1,8 +1,15 @@
 ﻿export class User {
     id: number;
-    username: string;
-    password: string;
     firstName: string;
     lastName: string;
     token: string;
+// myobj
+    username: string;
+    password: string;
+    age: number;
+    gender: string;
+    mobileNo: string;
+    name: string;
+    userType: string;
+    uuid: string;
 }
