@@ -8,6 +8,7 @@ import {HospitalService} from '@app/_services/hospital.service';
 import {Doctor} from '@app/_models/doctor';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
+import {Hospital} from '@app/_models/hospital';
 
 
 @Component({ templateUrl: 'home.component.html' })
@@ -18,12 +19,17 @@ export class HomeComponent implements OnInit {
   doctor: Doctor;
   currentUser: User ;
   patients: Patient[] = [];
+  hospitals: Hospital[] = [];
+  hospitalDoctors: Doctor[] = [];
   patientUUIDDiagnose: string;
   doctorUUIDDiagnose: string;
   role: any;
   doctor_profile_flag = true;
   doctor_pm_flag = false;
   diagnose_flag = false;
+  hospitalList_flag = true;
+  hospitalDetails_flag = false;
+  hospital: Hospital;
 
 
 
@@ -59,6 +65,11 @@ export class HomeComponent implements OnInit {
     if (this.role === 'DOCTOR') {
       this.fetchDoctorByUserName();
     }
+
+    if (this.role === 'ADMIN') {
+      this.fetchHospitals();
+    }
+
 
   }
 
@@ -138,10 +149,41 @@ export class HomeComponent implements OnInit {
 
       },
       failure => {
-        this.alertService.error('Something goes wrong');
-        this.router.navigate(['/']);
-        this.router.navigate(['/login']);
 
+
+      }
+    );
+  }
+
+  private fetchHospitals() {
+    this.hospitalService.getAll().subscribe(
+      response => {
+        this.hospitals = response;
+      },
+      failure => {
+        this.alertService.error('Something goes wrong');
+        this.router.navigate(['/login']);
+      }
+
+    );
+  }
+
+  public viewHospitalDetailsAction(hospital: Hospital) {
+    this.hospitalDetails_flag = true;
+    this.hospital = hospital;
+    this.hospitalList_flag = false;
+    this.loadDoctorsByHospital();
+  }
+
+  private loadDoctorsByHospital() {
+    this.doctorService.getHospitalDoctors(this.hospital.uuid).subscribe(
+      response => {
+        this.hospitalDoctors = response;
+      }
+      ,
+      failure => {
+        this.alertService.error('Something goes wrong');
+        // this.router.navigate(['/login']);
       }
     );
   }

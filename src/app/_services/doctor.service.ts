@@ -30,7 +30,7 @@ export class DoctorService {
   }
 
   getHospitalDoctors(hospitalUUID: string) {
-    return this.http.get<User>(`${environment.apiUrl}/api/doctor/hospital/${hospitalUUID}`);
+    return this.http.get<Doctor[]>(`${environment.apiUrl}/api/doctor/hospital/${hospitalUUID}`);
   }
 
 }

@@ -39,12 +39,6 @@
 
 </div>
 <!--#################################################################################################################-->
-<div *ngIf="role==='ADMIN'">
-  <h1 class="bigtitle">ADMIN</h1>
-  <hr>
-
-</div>
-<!--#################################################################################################################-->
 
 <div *ngIf="role==='DOCTOR'">
   <h1 class="bigtitle">DOCTOR</h1>
@@ -162,4 +156,93 @@
 </div>
 
 
+<!--#################################################################################################################-->
+
+<div *ngIf="role==='ADMIN'">
+  <h1 class="bigtitle">ADMIN</h1>
+  <hr>
+  <div *ngIf="hospitalList_flag == true">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Hospitals</h3>
+          <hr>
+
+
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Address</th>
+              <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let hospital of hospitals">
+              <th scope="row">1</th>
+              <td>{{hospital?.name}}</td>
+              <td>{{hospital?.address}}</td>
+              <td>
+                <button class="btn btn-outline-primary mb-2 mr-2" (click)="viewHospitalDetailsAction(hospital?.uuid)">View details</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="hospitalDetails_flag == true">
+    <button type="button" class="close" aria-label="Close" (click)="hospitalDetails_flag=false; hospitalList_flag=true;">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Hospital Details</h3>
+          <hr>
+
+          <b>Hospital: </b> {{hospital.name}}<br>
+          <b>Address: </b> {{hospital.address}}<br>
+          <hr>
+
+          <h3 class="card-title">Doctor Details</h3>
+
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Mobile No</th>
+              <th scope="col">Age</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let hospitalDoctor of hospitalDoctors">
+              <th scope="row">1</th>
+              <td>{{hospitalDoctor?.user?.name}}</td>
+              <td>{{hospitalDoctor?.user?.age}}</td>
+              <td>{{hospitalDoctor?.user?.mobileNo}}</td>
+
+            </tr>
+            </tbody>
+          </table>
+
+
+
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+</div>
 <!--#################################################################################################################-->
