@@ -14,6 +14,7 @@ import {Hospital} from '@app/_models/hospital';
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent implements OnInit {
   diagnoseForm: FormGroup;
+  hospitalForm: FormGroup;
   user: User ;
   patient: Patient;
   doctor: Doctor;
@@ -29,6 +30,7 @@ export class HomeComponent implements OnInit {
   diagnose_flag = false;
   hospitalList_flag = true;
   hospitalDetails_flag = false;
+  createHospital_flag = false;
   hospital: Hospital;
 
 
@@ -50,6 +52,13 @@ export class HomeComponent implements OnInit {
 
     this.diagnoseForm = this.formBuilder.group({
       diagnosetext: ['', Validators.required]
+    });
+
+    this.hospitalForm = this.formBuilder.group({
+      hospitalname: ['', Validators.required],
+      hospitaladdress: ['', Validators.required]
+
+
     });
 
 
@@ -137,9 +146,7 @@ export class HomeComponent implements OnInit {
   }
 
   public onDiagnoseFormSubmit() {
-    console.log('patient uuid', this.patientUUIDDiagnose);
-    console.log('doctor uuid', this.doctorUUIDDiagnose);
-    console.log('diagnose', this.diagnoseForm.get('diagnosetext').value);
+
     this.patientService
       .addDiagnose(this.patientUUIDDiagnose, this.doctorUUIDDiagnose, this.diagnoseForm.get('diagnosetext').value).subscribe(
 
@@ -188,5 +195,26 @@ export class HomeComponent implements OnInit {
     );
   }
 
+  public onHospitalFormSubmit() {
+
+    console.log(this.hospitalForm.get('hospitalname').value);
+    console.log(this.hospitalForm.get('hospitaladdress').value);
+    // stop here if form is invalid
+    if (this.hospitalForm.invalid) {
+      return;
+    }
+    const hospitalobj = <Hospital>{
+      name: this.hospitalForm.get('hospitalname').value,
+      address: this.hospitalForm.get('hospitaladdress').value
+    };
+    this.hospitalService.create(hospitalobj).subscribe(
+      response => {
+        this.router.navigate(['/login']);
+      },
+      failure => {
+        this.router.navigate(['/login']);
+      }
+    );
+  }
 
 }

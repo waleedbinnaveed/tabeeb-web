@@ -162,9 +162,13 @@
   <h1 class="bigtitle">ADMIN</h1>
   <hr>
 
-  <div> //condition to be added
-  <div *ngIf="hospitalList_flag == true">
+
+
+
+    <div *ngIf="hospitalList_flag == true">
     <div class="col-sm-12">
+      <button type="button" class="btn btn-primary btn-lg btn-block" (click)="createHospital_flag=true; hospitalList_flag =false; hospitalDetails_flag=false;">Create Hospital</button>
+      <br>
       <div class="card">
         <div class="card-body">
           <h3 class="card-title">Hospitals</h3>
@@ -243,10 +247,37 @@
     </div>
 
   </div>
+
+  <div *ngIf="createHospital_flag==true">
+    <h1> Create Hospital</h1>
+
+    <form [formGroup]="hospitalForm" (ngSubmit)="onHospitalFormSubmit()">
+
+      <div class="form-group">
+        <input type="text" class="form-control" id="hospitalname" formControlName="hospitalname"[ngClass]="{ 'is-invalid': submitted && f.hospitalname.errors}"/>
+        <div *ngIf="hospitalname && f.hospitalname.errors" class="invalid-feedback">
+          <div *ngIf="f.hospitalname.errors.required">name is required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <textarea class="form-control" id="hospitaladdress" formControlName="hospitaladdress" rows="3" [ngClass]="{ 'is-invalid': submitted && f.hospitaladdress.errors}"></textarea>
+        <div *ngIf="submitted && f.hospitaladdress.errors" class="invalid-feedback">
+          <div *ngIf="f.hospitaladdress.errors.required">address is required</div>
+        </div>
+      </div>
+
+
+
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+
+    </form>
+
+
+  </div>
   </div>
 
 
 
-
-</div>
 <!--#################################################################################################################-->

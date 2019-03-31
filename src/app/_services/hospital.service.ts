@@ -15,12 +15,8 @@ export class HospitalService {
         return this.http.get<Hospital[]>( `${environment.apiUrl}/api/hospital`);
     }
 
-    getByUUID(uuid: string) {
-        return this.http.get(this.URL_RESOURCE_HOSPITAL + '/' + uuid);
-    }
-
 
     create(hospital: Hospital) {
-        return this.http.post(this.URL_RESOURCE_HOSPITAL, hospital);
+        return this.http.post(( `${environment.apiUrl}/api/hospital`), hospital);
     }
 }
