@@ -1,9 +1,165 @@
-﻿<h1>Hi {{currentUser.firstName}}!</h1>
-<p>You're logged in with Angular 7!!</p>
-<h3>All registered users:</h3>
-<ul>
-    <li *ngFor="let user of users">
-        {{user.username}} ({{user.firstName}} {{user.lastName}})
-        - <a (click)="deleteUser(user.id)" class="text-danger">Delete</a>
-    </li>
-</ul>
+﻿<div *ngIf="role==='PATIENT'">
+  <h1 class="bigtitle">Patient</h1>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Patient profile</h3>
+          <hr>
+          <!--<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>-->
+          <img src="https://www.freeiconspng.com/uploads/profile-icon-9.png" height="70px" width="70px"
+               class="img-thumbnail"><br><br>
+          <b>Full name: </b> {{patient?.user?.name}}<br>
+          <b>Username: </b> {{patient?.user?.username}}<br>
+          <b>Age: </b> {{patient?.user?.age}} years<br>
+          <b>Mobile No: </b>{{patient?.user?.mobileNo}}<br>
+          <b>Doctor: </b> {{patient?.doctor?.user?.name}}<br>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Diagnoses</h3>
+          <hr>
+          <p class="card-text">{{patient?.diagnose}}</p>
+          <hr>
+          <b>Diagnosed by: </b> {{patient?.doctor?.user?.name}}<br>
+          <b>Hospital: </b> {{patient?.doctor?.hospital?.name}}<br>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!--#################################################################################################################-->
+<div *ngIf="role==='ADMIN'">
+  <h1 class="bigtitle">ADMIN</h1>
+  <hr>
+
+</div>
+<!--#################################################################################################################-->
+
+<div *ngIf="role==='DOCTOR'">
+  <h1 class="bigtitle">DOCTOR</h1>
+
+
+  <!--condition 1-->
+  <div *ngIf="doctor_profile_flag">
+    <!--<button type="button" (click)="doctor_profile_flag=false; doctor_pm_flag=true; if(patients == null){loadAllPatients()}" class="btn btn-outline-secondary btn-block">Patient Management</button>-->
+    <button type="button" (click)="loadPatientAction()" class="btn btn-outline-secondary btn-block">Patient Management
+    </button>
+
+    <br>
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Doctor profile</h3>
+            <img src="https://www.freeiconspng.com/uploads/profile-icon-9.png" height="70px" width="70px"
+                 class="img-thumbnail"><br><br>
+            <b>Full name: </b> {{doctor?.user?.name}}<br>
+            <b>Username: </b> {{doctor?.user?.username}}<br>
+            <b>Age: </b> {{doctor?.user?.age}} years<br>
+            <b>Mobile No: </b>{{doctor?.user?.mobileNo}}<br>
+            <b>Hospital: </b> {{doctor?.hospital?.name}}<br>
+            <b>Address: </b> {{doctor?.hospital?.address}}<br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--condition 2-->
+  <div *ngIf="doctor_pm_flag">
+    <button type="button" (click)="doctor_profile_flag=true; doctor_pm_flag=false"
+            class="btn btn-outline-secondary btn-block"> Doctor Profile
+    </button>
+    <br>
+    <div class="row">
+      <div class="col-sm-12 fluid" style="text-align: center">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Patient management</h3>
+
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Age</th>
+                <th scope="col">Diagnoses</th>
+                <th scope="col">Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let patient of patients">
+                <th scope="row">1</th>
+                <td>{{patient?.user?.name}}</td>
+                <td>{{patient?.user?.age}}</td>
+                <td>{{patient?.diagnose}}</td>
+                <td>
+                  <button class="btn btn-outline-primary mb-2 mr-2" (click)="addDiagnoseAction(patient?.user?.uuid,patient?.doctor?.user?.uuid)">Add/Update</button>
+
+                </td>
+              </tr>
+              </tbody>
+            </table>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="diagnose_flag==true">
+    <button type="button" class="close" aria-label="Close" (click)="doctor_profile_flag=false; doctor_pm_flag=true;diagnose_flag=false">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <br>
+    <div class="row">
+      <div class="col-sm-12 fluid" style="text-align: center">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Add Diagnose</h3>
+
+
+
+
+
+            <form [formGroup]="diagnoseForm" (ngSubmit)="onDiagnoseFormSubmit()">
+              <div class="form-group">
+                <textarea class="form-control" id="diagnosetext" formControlName="diagnosetext" rows="3" [ngClass]="{ 'is-invalid': submitted && f.diagnosetext.errors}"></textarea>
+                <div *ngIf="submitted && f.diagnosetext.errors" class="invalid-feedback">
+                  <div *ngIf="f.diagnosetext.errors.required">Diagnose is required</div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+
+            </form>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+
+
+<!--#################################################################################################################-->

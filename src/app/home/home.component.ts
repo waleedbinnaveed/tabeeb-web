@@ -1,43 +1,150 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
+﻿import {Component, OnInit} from '@angular/core';
+import {first} from 'rxjs/operators';
+import {Patient} from '@app/_models/patient';
+import {PatientService} from '@app/_services/patient.service';
+import {User} from '@app/_models';
+import {AlertService, DoctorService, UserService} from '@app/_services';
+import {HospitalService} from '@app/_services/hospital.service';
+import {Doctor} from '@app/_models/doctor';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
 
-import { User } from '@app/_models';
-import { UserService, AuthenticationService } from '@app/_services';
 
 @Component({ templateUrl: 'home.component.html' })
-export class HomeComponent implements OnInit, OnDestroy {
-    currentUser: User;
-    currentUserSubscription: Subscription;
-    users: User[] = [];
+export class HomeComponent implements OnInit {
+  diagnoseForm: FormGroup;
+  user: User ;
+  patient: Patient;
+  doctor: Doctor;
+  currentUser: User ;
+  patients: Patient[] = [];
+  patientUUIDDiagnose: string;
+  doctorUUIDDiagnose: string;
+  role: any;
+  doctor_profile_flag = true;
+  doctor_pm_flag = false;
+  diagnose_flag = false;
 
-    constructor(
-        private authenticationService: AuthenticationService,
-        private userService: UserService
-    ) {
-        this.currentUserSubscription = this.authenticationService.currentUser.subscribe(user => {
-            this.currentUser = user;
-        });
+
+
+  constructor(private patientService: PatientService,
+              private doctorService: DoctorService,
+              private hospitalService: HospitalService,
+              private userService: UserService,
+              private alertService: AlertService,
+              private formBuilder: FormBuilder,
+              private router: Router
+
+  ) {
+
+  }
+
+
+  ngOnInit() {
+
+    this.diagnoseForm = this.formBuilder.group({
+      diagnosetext: ['', Validators.required]
+    });
+
+
+
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    this.fetchUserByUsername();
+    this.role = this.currentUser.authorities[0].role;
+
+    if (this.role === 'PATIENT') {
+      this.fetchPatientByUserName();
     }
 
-    ngOnInit() {
-        this.loadAllUsers();
+    if (this.role === 'DOCTOR') {
+      this.fetchDoctorByUserName();
     }
 
-    ngOnDestroy() {
-        // unsubscribe to ensure no memory leaks
-        this.currentUserSubscription.unsubscribe();
+  }
+
+  get f() {
+    return this.diagnoseForm.controls;
+  }
+
+  private fetchUserByUsername() {
+    this.userService.getByUserName(this.currentUser.username).subscribe(
+      user => {
+        this.user = user;
+      }, failure => {
+        this.alertService.error('Something goes wrong');
+      }
+    );
+  }
+
+  private fetchPatientByUserName() {
+    this.patientService.getByUserName(this.currentUser.username).subscribe(
+      patient => {
+        this.patient = patient;
+      }, failure => {
+        this.alertService.error('Something goes wrong');
+      }
+    );
+  }
+
+  private fetchDoctorByUserName() {
+    this.doctorService.getByUserName(this.currentUser.username).subscribe(
+      doctor => {
+        this.doctor = doctor;
+      }, failure => {
+        this.alertService.error('Something goes wrong');
+      }
+    );
+  }
+
+  public loadPatientAction() {
+
+    this.doctor_profile_flag = false;
+    this.doctor_pm_flag = true;
+    if (this.patients.length === 0) {
+      this.loadAllPatients(); // avoid many calls to server
     }
 
-    deleteUser(id: number) {
-        this.userService.delete(id).pipe(first()).subscribe(() => {
-            this.loadAllUsers()
-        });
+  }
+  private loadAllPatients() {
+    this.patientService.getPatientByDoctor(this.doctor.user.uuid).pipe(first()).subscribe(patients => {
+      this.patients = patients;
     }
+    );
+  }
 
-    private loadAllUsers() {
-        this.userService.getAll().pipe(first()).subscribe(users => {
-            this.users = users;
-        });
-    }
+  public addDiagnoseAction(patientuuid: string, doctoruuid: string) {
+    this.diagnose_flag = true;
+    this.doctor_pm_flag = false;
+    this.doctor_profile_flag = false;
+    this.patientUUIDDiagnose = patientuuid;
+    this.doctorUUIDDiagnose = doctoruuid;
+
+
+    console.log('patient uuid*', patientuuid);
+    console.log('doctor uuid*', doctoruuid);
+
+  }
+
+  public onDiagnoseFormSubmit() {
+    console.log('patient uuid', this.patientUUIDDiagnose);
+    console.log('doctor uuid', this.doctorUUIDDiagnose);
+    console.log('diagnose', this.diagnoseForm.get('diagnosetext').value);
+    this.patientService
+      .addDiagnose(this.patientUUIDDiagnose, this.doctorUUIDDiagnose, this.diagnoseForm.get('diagnosetext').value).subscribe(
+
+      response => {
+        this.alertService.success('Diagnose added', true);
+        this.router.navigate(['/login']);
+
+      },
+      failure => {
+        this.alertService.error('Something goes wrong');
+        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
+
+      }
+    );
+  }
+
+
 }

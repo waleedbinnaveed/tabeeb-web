@@ -27,4 +27,8 @@ export class UserService {
     delete(id: number) {
         return this.http.delete(`${environment.apiUrl}/users/${id}`);
     }
+
+  getByUserName(username: string) {
+      return this.http.get<User>(`${environment.apiUrl}/api/user/${username}/username`);
+  }
 }

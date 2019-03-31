@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {Constants} from '@app/constants';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Patient} from '@app/_models/patient';
-import {Doctor} from '@app/_models/doctor';
 import {environment} from '@environments/environment';
 
 
@@ -18,22 +17,29 @@ export class PatientService {
   }
 
     getAll() {
-        return this.http.get(this.URL_RESOURCE_PATIENT);
+        return this.http.get<Patient[]>(`${environment.apiUrl}/api/patient`);
     }
 
     getByUUID(uuid: string) {
-        return this.http.get(this.URL_RESOURCE_PATIENT + '/' + uuid);
+        return this.http.get<Patient>(`${environment.apiUrl}/api/patient/${uuid}`);
     }
 
 
-    getHospitalDoctors(doctorUUID: string) {
-        return this.http.get(this.URL_RESOURCE_PATIENT + '/doctor/' + doctorUUID);
+    getPatientByDoctor(doctorUUID: string) {
+        return this.http.get<Patient[]>(`${environment.apiUrl}/api/patient/doctor/${doctorUUID}`);
     }
 
-    addDiagnose(uuid: string, diagnose: string, doctorUUID: string) {
-        const params = new HttpParams();
-        params.set('diagnose', diagnose);
-        params.set('doctor-uuid', doctorUUID);
-        return this.http.put(this.URL_RESOURCE_PATIENT + '/' + uuid + '/diagnose', params);
+    addDiagnose(uuid: string, doctorUUID: string, diagnose: string) {
+        let params = new HttpParams();
+      // params.set('doctor-uuid', doctorUUID);
+      // params.set('diagnose', diagnose);
+      params = params.append('doctor-uuid', doctorUUID);
+      params = params.append('diagnose', diagnose);
+
+      return this.http.put(`${environment.apiUrl}/api/patient/${uuid}/diagnose`, params);
     }
+
+  getByUserName(username: string) {
+    return this.http.get<Patient>(`${environment.apiUrl}/api/patient/${username}/username`);
+  }
 }
