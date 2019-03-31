@@ -161,6 +161,8 @@
 <div *ngIf="role==='ADMIN'">
   <h1 class="bigtitle">ADMIN</h1>
   <hr>
+
+  <div> //condition to be added
   <div *ngIf="hospitalList_flag == true">
     <div class="col-sm-12">
       <div class="card">
@@ -184,7 +186,7 @@
               <td>{{hospital?.name}}</td>
               <td>{{hospital?.address}}</td>
               <td>
-                <button class="btn btn-outline-primary mb-2 mr-2" (click)="viewHospitalDetailsAction(hospital?.uuid)">View details</button>
+                <button class="btn btn-outline-primary mb-2 mr-2" (click)="viewHospitalDetailsAction(hospital)">View details</button>
               </td>
             </tr>
             </tbody>
@@ -197,10 +199,11 @@
   </div>
 
   <div *ngIf="hospitalDetails_flag == true">
-    <button type="button" class="close" aria-label="Close" (click)="hospitalDetails_flag=false; hospitalList_flag=true;">
-      <span aria-hidden="true">&times;</span>
-    </button>
+
     <div class="col-sm-12">
+      <button type="button" class="close" aria-label="Close" (click)="hospitalDetails_flag=false; hospitalList_flag=true;">
+        <span aria-hidden="true">&times;</span>
+      </button>
       <div class="card">
         <div class="card-body">
           <h3 class="card-title">Hospital Details</h3>
@@ -239,6 +242,7 @@
       </div>
     </div>
 
+  </div>
   </div>
 
 
