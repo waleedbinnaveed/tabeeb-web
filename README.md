@@ -1,5 +1,8 @@
-# angular-7-registration-login-example
+# angular 7 - Tabeeb WEB 
+Front for health care application tabeeb web with following features 
+Dependency Injection
+Separate Layers for services and components 
+Implementation of JWT HTTP interceptors for automatically sending jwt headers
+Basic UI through plain Bootstrap  
+Angular 7
 
-Angular 7 User Registration and Login Example with Angular CLI
-
-Full tutorial with example available at http://jasonwatmore.com/post/2018/10/29/angular-7-user-registration-and-login-example-tutorial
